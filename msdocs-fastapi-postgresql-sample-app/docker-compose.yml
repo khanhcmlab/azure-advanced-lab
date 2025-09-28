@@ -41,10 +41,10 @@ services:
       # Session secret key
       SESSION_SECRET_KEY: "dev-secret-key-change-in-production"
       # Azure Authentication (uncomment and configure to enable)
-      # AZURE_CLIENT_ID: ${AZURE_CLIENT_ID}
-      # AZURE_CLIENT_SECRET: ${AZURE_CLIENT_SECRET}
-      # AZURE_TENANT_ID: ${AZURE_TENANT_ID}
-      # AZURE_REDIRECT_URI: http://localhost:8000/auth/callback
+      AZURE_CLIENT_ID: ${AZURE_CLIENT_ID}
+      AZURE_CLIENT_SECRET: ${AZURE_CLIENT_SECRET}
+      AZURE_TENANT_ID: ${AZURE_TENANT_ID}
+      AZURE_REDIRECT_URI: http://localhost:8000/auth/callback
     depends_on:
       postgres:
         condition: service_healthy
