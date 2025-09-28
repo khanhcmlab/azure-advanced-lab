@@ -1,0 +1,7 @@
+# Add Docker-related files to gitignore
+.env.docker.local
+docker-compose.override.yml
+
+# Docker volumes
+postgres_data/
+pgadmin_data/

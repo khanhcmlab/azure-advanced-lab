@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+
+{% block title %}User Profile{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center mt-5">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">
+                    <i class="fas fa-user-circle"></i> User Profile
+                </h4>
+            </div>
+            <div class="card-body">
+                {% if current_user %}
+                <div class="row">
+                    <div class="col-md-3 text-center">
+                        <div class="profile-avatar mb-3">
+                            <i class="fas fa-user-circle fa-5x text-primary"></i>
+                        </div>
+                    </div>
+                    <div class="col-md-9">
+                        <h5 class="card-title">{{ current_user.name or "User" }}</h5>
+                        
+                        <div class="row mb-3">
+                            <div class="col-sm-4">
+                                <strong>Name:</strong>
+                            </div>
+                            <div class="col-sm-8">
+                                {{ current_user.name or "Not provided" }}
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-sm-4">
+                                <strong>Email:</strong>
+                            </div>
+                            <div class="col-sm-8">
+                                {{ current_user.email or "Not provided" }}
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-sm-4">
+                                <strong>User ID:</strong>
+                            </div>
+                            <div class="col-sm-8">
+                                <code>{{ current_user.id or "Not provided" }}</code>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-sm-4">
+                                <strong>Authentication:</strong>
+                            </div>
+                            <div class="col-sm-8">
+                                <span class="badge bg-success">
+                                    <i class="fas fa-check-circle"></i> Azure Active Directory
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <hr>
+                
+                <div class="d-flex justify-content-between">
+                    <a href="/" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Back to Home
+                    </a>
+                    <a href="/auth/logout" class="btn btn-outline-danger">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </a>
+                </div>
+                
+                {% else %}
+                <div class="text-center">
+                    <h5>Not authenticated</h5>
+                    <p>Please sign in to view your profile.</p>
+                    <a href="/auth/login" class="btn btn-primary">
+                        <i class="fas fa-sign-in-alt"></i> Sign in with Azure
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        {% if current_user %}
+        <div class="card mt-4">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-info-circle"></i> Authentication Information
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info">
+                    <h6><i class="fas fa-shield-alt"></i> Security Information</h6>
+                    <ul class="mb-0">
+                        <li>You are authenticated using Azure Active Directory (AAD)</li>
+                        <li>Your session is secured with server-side storage</li>
+                        <li>Authentication tokens are managed securely</li>
+                        <li>You can logout at any time to clear your session</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,86 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database Service
+  postgres:
+    image: postgres:15-alpine
+    container_name: fastapi-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: fastapi_db
+      POSTGRES_USER: fastapi_user
+      POSTGRES_PASSWORD: fastapi_password
+      POSTGRES_HOST_AUTH_METHOD: trust
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-db:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U fastapi_user -d fastapi_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # FastAPI Application Service
+  fastapi-app:
+    build: .
+    container_name: fastapi-app
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      # Database configuration
+      DBNAME: fastapi_db
+      DBHOST: postgres
+      DBPORT: 5432
+      DBUSER: fastapi_user
+      DBPASS: fastapi_password
+      # Azure PostgreSQL connection string format (for compatibility)
+      AZURE_POSTGRESQL_CONNECTIONSTRING: "host=postgres port=5432 dbname=fastapi_db user=fastapi_user password=fastapi_password sslmode=prefer"
+      # Session secret key
+      SESSION_SECRET_KEY: "dev-secret-key-change-in-production"
+      # Azure Authentication (uncomment and configure to enable)
+      # AZURE_CLIENT_ID: ${AZURE_CLIENT_ID}
+      # AZURE_CLIENT_SECRET: ${AZURE_CLIENT_SECRET}
+      # AZURE_TENANT_ID: ${AZURE_TENANT_ID}
+      # AZURE_REDIRECT_URI: http://localhost:8000/auth/callback
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./src:/app/src
+      - ./static:/app/static
+      - ./templates:/app/templates
+    command: >
+      sh -c "
+        echo 'Waiting for database to be ready...' &&
+        python3 src/fastapi_app/seed_data.py &&
+        python3 -m uvicorn fastapi_app:app --host 0.0.0.0 --port 8000 --reload
+      "
+
+  # pgAdmin for database management (optional)
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: fastapi-pgadmin
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@fastapi.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_LISTEN_PORT: 80
+    ports:
+      - "8080:80"
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    depends_on:
+      - postgres
+
+volumes:
+  postgres_data:
+    driver: local
+  pgadmin_data:
+    driver: local
+
+networks:
+  default:
+    name: fastapi-network

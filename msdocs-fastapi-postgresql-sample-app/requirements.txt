@@ -1,0 +1,14 @@
+# global requirements
+gunicorn==22.0.0
+uvicorn==0.23.2
+fastapi==0.111.1
+psycopg2
+SQLAlchemy==2.0.31
+sqlmodel==0.0.20
+
+# Azure Authentication
+msal==1.24.1
+authlib==1.2.1
+itsdangerous==2.1.2
+python-multipart==0.0.6
+requests==2.31.0
